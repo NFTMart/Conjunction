@@ -15,17 +15,17 @@ const (
 
 //Features
 const (
-	LIVE_STATE = iota
-	FULL_TRANSACTION_HISTORY
-	ACCOUNT_HISTORY
-	MARKET_HISTORY
-	NFT_HISTORY
+	LiveState = iota
+	FullTransactionHistory
+	AccountHistory
+	MarketHistory
+	NftHistory
 )
 
 const (
-	ACCOUNT_HISTORY_ENDPOINT = "accountHistory"
-	MARKET_HISTORY_ENDPOINT  = "marketHistory"
-	NFT_HISTORY_ENDPOINT     = "nftHistory"
+	AccountHistoryEndpoint = "accountHistory"
+	MarketHistoryEndpoint  = "marketHistory"
+	NftHistoryEndpoint     = "nftHistory"
 )
 
 type Node struct {
@@ -67,12 +67,12 @@ func (x Node) HealthCheck() bool {
 
 	if x.Type == HISTORY {
 		var query = ""
-		if x.Features[ACCOUNT_HISTORY] {
-			query = ACCOUNT_HISTORY_ENDPOINT + "?account=null"
-		} else if x.Features[MARKET_HISTORY] {
-			query = MARKET_HISTORY_ENDPOINT + "?symbol=BEE"
-		} else if x.Features[NFT_HISTORY] {
-			query = NFT_HISTORY_ENDPOINT + "?id=1"
+		if x.Features[AccountHistory] {
+			query = AccountHistoryEndpoint + "?account=null"
+		} else if x.Features[MarketHistory] {
+			query = MarketHistoryEndpoint + "?symbol=BEE"
+		} else if x.Features[NftHistory] {
+			query = NftHistoryEndpoint + "?id=1"
 		} else {
 			x.Active = false
 			return false
@@ -94,4 +94,6 @@ func (x Node) HealthCheck() bool {
 		x.Active = true
 		return true
 	}
+
+	return false
 }
