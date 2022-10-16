@@ -127,6 +127,9 @@ func LoadNodes() []Node {
 	}
 	var newNodes = make([]Node, 100)
 	for _, node := range readNodes {
+		if !node.Active {
+			continue
+		}
 		newNode := Node{}
 		newNode.Name = node.Name
 		newNode.Address = node.Address
