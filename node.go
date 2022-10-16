@@ -1,9 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"github.com/cfoxon/jrc"
 	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
 )
 
 //Node Types
@@ -94,6 +97,74 @@ func (x Node) HealthCheck() bool {
 		x.Active = true
 		return true
 	}
-
 	return false
+}
+
+type ConfigNode struct {
+	Name     string   `json:"name"`
+	Address  string   `json:"address"`
+	Type     string   `json:"type"`
+	Active   bool     `json:"active"`
+	Features []string `json:"features"`
+}
+
+func LoadNodes() []Node {
+	file, err := os.Open("nodes.json")
+	if err != nil {
+		log.Fatal("Error loading nodes file")
+	}
+	defer func(file *os.File) {
+		err := file.Close()
+		if err != nil {
+			log.Fatal("couldn't close node file")
+		}
+	}(file)
+	var readNodes = make([]ConfigNode, 100)
+	decoder := json.NewDecoder(file)
+	err = decoder.Decode(&readNodes)
+	if err != nil {
+		log.Fatal("can't decode nodes JSON: ", err)
+	}
+	var newNodes = make([]Node, 100)
+	for _, node := range readNodes {
+		newNode := Node{}
+		newNode.Name = node.Name
+		newNode.Address = node.Address
+		if node.Type == "Full" {
+			newNode.Type = FULL
+		} else if node.Type == "LIGHT" {
+			newNode.Type = LIGHT
+		} else if node.Type == "HISTORY" {
+			newNode.Type = HISTORY
+		} else {
+			log.Fatal("Invalid type detected on node: ", node.Name)
+		}
+		newNode.Active = node.Active
+		newNode.Features = map[int]bool{ // Map literal
+			LiveState:              false,
+			FullTransactionHistory: false,
+			AccountHistory:         false,
+			MarketHistory:          false,
+			NftHistory:             false,
+		}
+		for _, feature := range node.Features {
+			if feature == "LiveState" {
+				newNode.Features[LiveState] = true
+			}
+			if feature == "FullTransactionHistory" {
+				newNode.Features[FullTransactionHistory] = true
+			}
+			if feature == "AccountHistory" {
+				newNode.Features[AccountHistory] = true
+			}
+			if feature == "MarketHistory" {
+				newNode.Features[MarketHistory] = true
+			}
+			if feature == "NftHistory" {
+				newNode.Features[NftHistory] = true
+			}
+		}
+		newNodes = append(newNodes, newNode)
+	}
+	return newNodes
 }
