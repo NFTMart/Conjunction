@@ -43,25 +43,26 @@ func (x Node) cleanup() {
 }
 
 // HealthCheck Does a health check on the node and sets active to correct state depending on results of the check
-func (x Node) HealthCheck() {
+func (x Node) HealthCheck() bool {
 	x.cleanup()
 	if x.Type == FULL || x.Type == LIGHT {
 		rpcClient, err := jrc.NewServer(x.Address)
 		if err != nil {
 			x.Active = false
-			return
+			return false
 		}
 		jr2query := jrc.RpcRequest{Method: "blockchain.getStatus", JsonRpc: "2.0", Id: 0}
 		resp, err := rpcClient.Exec(jr2query)
 		if err != nil {
 			x.Active = false
-			return
+			return false
 		}
 		if resp.Result == nil {
 			x.Active = false
-			return
+			return false
 		}
 		x.Active = true
+		return true
 	}
 
 	if x.Type == HISTORY {
@@ -74,22 +75,23 @@ func (x Node) HealthCheck() {
 			query = NFT_HISTORY_ENDPOINT + "?id=1"
 		} else {
 			x.Active = false
-			return
+			return false
 		}
 		resp, err := http.Get(x.Address + query)
 		if err == nil {
 			x.Active = false
-			return
+			return false
 		}
 		body, err := ioutil.ReadAll(resp.Body)
 		if err == nil {
 			x.Active = false
-			return
+			return false
 		}
 		if body == nil {
 			x.Active = false
-			return
+			return false
 		}
 		x.Active = true
+		return true
 	}
 }
