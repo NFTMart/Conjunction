@@ -1,6 +1,8 @@
 package main
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLoadNodes(t *testing.T) {
 	newNodes := LoadNodes("nodes.json")
@@ -34,5 +36,20 @@ func TestLoadNodes(t *testing.T) {
 	}
 	if firstNode.Features[NftHistory] != false {
 		t.Errorf("Node NftHistory invalid")
+	}
+}
+
+func TestHealthCheck(t *testing.T) {
+	newNodes := LoadNodes("nodes.json")
+	if len(newNodes) != 1 {
+		t.Errorf("Error loading nodes")
+	}
+	firstNode := newNodes[0]
+	healthCheckResult := firstNode.HealthCheck()
+	if healthCheckResult != false {
+		t.Errorf("Health check result invalid")
+	}
+	if firstNode.Active != false {
+		t.Errorf("Node Active Wrong")
 	}
 }

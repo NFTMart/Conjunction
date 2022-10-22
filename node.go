@@ -40,14 +40,14 @@ type Node struct {
 	Features map[int]bool `json:"features"`
 }
 
-func (x Node) cleanup() {
-	if x.Address[len(x.Address)] != '/' {
+func (x *Node) cleanup() {
+	if x.Address[len(x.Address)-1] != '/' {
 		x.Address += "/"
 	}
 }
 
 // HealthCheck Does a health check on the node and sets active to correct state depending on results of the check
-func (x Node) HealthCheck() bool {
+func (x *Node) HealthCheck() bool {
 	x.cleanup()
 	if x.Type == FULL || x.Type == LIGHT {
 		rpcClient, err := jrc.NewServer(x.Address)
