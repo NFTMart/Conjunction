@@ -2,11 +2,12 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/cfoxon/jrc"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/cfoxon/jrc"
 )
 
 //Node Types
@@ -108,8 +109,8 @@ type ConfigNode struct {
 	Features []string `json:"features"`
 }
 
-func LoadNodes() []Node {
-	file, err := os.Open("nodes.json")
+func LoadNodes(fileName string) []Node {
+	file, err := os.Open(fileName)
 	if err != nil {
 		log.Fatal("Error loading nodes file")
 	}
@@ -119,13 +120,13 @@ func LoadNodes() []Node {
 			log.Fatal("couldn't close node file")
 		}
 	}(file)
-	var readNodes = make([]ConfigNode, 100)
+	var readNodes = make([]ConfigNode, 0)
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&readNodes)
 	if err != nil {
 		log.Fatal("can't decode nodes JSON: ", err)
 	}
-	var newNodes = make([]Node, 100)
+	var newNodes = make([]Node, 0)
 	for _, node := range readNodes {
 		if !node.Active {
 			continue
