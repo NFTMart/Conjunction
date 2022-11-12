@@ -19,6 +19,17 @@ type QueryParams struct {
 	Params  json.RawMessage `json:"params"`
 }
 
+type QueryResponseError struct {
+	Jsonrpc string                `json:"jsonrpc"`
+	Id      int                   `json:"id"`
+	Error   QueryResponseInternal `json:"error"`
+}
+
+type QueryResponseInternal struct {
+	Code    int    `json:"code"`
+	Message string `json:"message"`
+}
+
 func Router(r *gin.Engine) {
 	r.POST("/", handleMain)
 	//r.POST("/history")
@@ -29,11 +40,16 @@ func Router(r *gin.Engine) {
 func handleMain(c *gin.Context) {
 	jsonData, err := ioutil.ReadAll(c.Request.Body)
 	if err != nil {
-		// Handle error
+		errInternal := QueryResponseInternal{-32603, "Error Processing Request"}
+		errRes := QueryResponseError{"2.0", -1, errInternal}
+		c.JSON(
+			http.StatusOK,
+			errRes,
+		)
 	}
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
-	if strings.HasPrefix(query.Method, "contracts.") || strings.HasPrefix(query.Method, "blockchain.") {
+	//if strings.HasPrefix(query.Method, "contracts.") || strings.HasPrefix(query.Method, "blockchain.") {
 		rpcClient, _ := jrc.NewServer("https://engine.rishipanthee.com")
 		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 		resp, _ := rpcClient.Exec(jr2query)
