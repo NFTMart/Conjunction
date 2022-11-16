@@ -3,13 +3,15 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/cfoxon/jrc"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/cfoxon/jrc"
+	"github.com/cfoxon/jsonrpc2client"
+	"github.com/gin-gonic/gin"
 )
 
 type QueryParams struct {
@@ -49,10 +51,10 @@ func handleMain(c *gin.Context) {
 	}
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
-	//if strings.HasPrefix(query.Method, "contracts.") || strings.HasPrefix(query.Method, "blockchain.") {
-		rpcClient, _ := jrc.NewServer("https://engine.rishipanthee.com")
-		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
-		resp, _ := rpcClient.Exec(jr2query)
+	if strings.HasPrefix(query.Method, "contracts.") || strings.HasPrefix(query.Method, "blockchain.") {
+		rpcClient := jsonrpc2client.NewClient("https://engine.rishipanthee.com")
+		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
+		resp, _ := rpcClient.CallRaw(jr2query)
 		c.JSON(
 			http.StatusOK,
 			resp,
@@ -84,7 +86,6 @@ func handleMain(c *gin.Context) {
 			badBad,
 		)
 	}
-
 }
 
 func handleContracts(c *gin.Context) {

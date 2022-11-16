@@ -2,6 +2,8 @@ github.com/andybalholm/brotli v1.0.4 h1:V7DdXeJtZscaqfNuAdSRuRFzuiKlHSC/Zh3zl9qY
 github.com/andybalholm/brotli v1.0.4/go.mod h1:fO7iG3H7G2nSZ7m0zPUDn85XEX2GTukHGRSepvi9Eig=
 github.com/cfoxon/jrc v0.0.0-20220609213157-eecb83ecebf6 h1:vGELyr4CIReAAEYiNDwTsiM/asBg9OQGeLd6djo8dew=
 github.com/cfoxon/jrc v0.0.0-20220609213157-eecb83ecebf6/go.mod h1:namujisY108A+IOsocOcE0CE30N+uAflaR4LfU7rIMs=
+github.com/cfoxon/jsonrpc2client v0.0.0-20221114165351-06ca2bcae0e6 h1:t+AXGC+g6SZlvfYFsJlNVYKxNP4YJmflNMMacWZBbg4=
+github.com/cfoxon/jsonrpc2client v0.0.0-20221114165351-06ca2bcae0e6/go.mod h1:NHb6hgQrJadyIbJlQPWrpNVlZpyttJLAXKmcCuK4iTw=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
