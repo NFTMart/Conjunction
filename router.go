@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -51,8 +50,16 @@ func handleMain(c *gin.Context) {
 	}
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
-	if strings.HasPrefix(query.Method, "contracts.") || strings.HasPrefix(query.Method, "blockchain.") {
-		rpcClient := jsonrpc2client.NewClient("https://engine.rishipanthee.com")
+	if strings.HasPrefix(query.Method, "contracts.") {
+		rpcClient := jsonrpc2client.NewClient(GetNodeAddress(LiveState))
+		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
+		resp, _ := rpcClient.CallRaw(jr2query)
+		c.JSON(
+			http.StatusOK,
+			resp,
+		)
+	} else if strings.HasPrefix(query.Method, "blockchain.") {
+		rpcClient := jsonrpc2client.NewClient(GetNodeAddress(FullTransactionHistory))
 		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 		resp, _ := rpcClient.CallRaw(jr2query)
 		c.JSON(
@@ -73,8 +80,7 @@ func handleMain(c *gin.Context) {
 		}
 
 		var endpoint = strings.Split(query.Method, ".")[1]
-		fmt.Println("https://enginehistory.rishipanthee.com/" + endpoint + paramsString)
-		resp, err := http.Get("https://enginehistory.rishipanthee.com/" + endpoint + paramsString)
+		resp, err := http.Get(GetNodeAddress(AccountHistory) + endpoint + paramsString) //TODO: parse out exactly which histroy endpoint they were wanting
 		if err != nil {
 			log.Fatalln(err)
 		}
