@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -9,7 +10,6 @@ import (
 	"strings"
 
 	"github.com/cfoxon/jrc"
-	"github.com/cfoxon/jsonrpc2client"
 	"github.com/gin-gonic/gin"
 )
 
@@ -51,23 +51,33 @@ func handleMain(c *gin.Context) {
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
 	if strings.HasPrefix(query.Method, "contracts.") {
-		rpcClient := jsonrpc2client.NewClient(GetNodeAddress(LiveState))
-		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
-		resp, err := rpcClient.CallRaw(jr2query)
+		rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
+		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
+		resp, err := rpcClient.Exec(jr2query)
 		if err != nil {
+			fmt.Print(err)
 			c.JSON(
 				http.StatusBadGateway,
 				err,
 			)
+			return
 		}
 		c.JSON(
 			http.StatusOK,
 			resp,
 		)
 	} else if strings.HasPrefix(query.Method, "blockchain.") {
-		rpcClient := jsonrpc2client.NewClient(GetNodeAddress(FullTransactionHistory))
-		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
-		resp, _ := rpcClient.CallRaw(jr2query)
+		rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
+		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
+		resp, _ := rpcClient.Exec(jr2query)
+		if err != nil {
+			fmt.Print(err)
+			c.JSON(
+				http.StatusBadGateway,
+				err,
+			)
+			return
+		}
 		c.JSON(
 			http.StatusOK,
 			resp,
