@@ -53,7 +53,13 @@ func handleMain(c *gin.Context) {
 	if strings.HasPrefix(query.Method, "contracts.") {
 		rpcClient := jsonrpc2client.NewClient(GetNodeAddress(LiveState))
 		jr2query := &jsonrpc2client.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
-		resp, _ := rpcClient.CallRaw(jr2query)
+		resp, err := rpcClient.CallRaw(jr2query)
+		if err != nil {
+			c.JSON(
+				http.StatusBadGateway,
+				err,
+			)
+		}
 		c.JSON(
 			http.StatusOK,
 			resp,

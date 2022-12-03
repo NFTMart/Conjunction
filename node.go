@@ -160,6 +160,15 @@ func LoadNodes(fileName string) []Node {
 			MarketHistory:          false,
 			NftHistory:             false,
 		}
+
+		featureNodes = map[int][]Node{
+			LiveState:              nil,
+			FullTransactionHistory: nil,
+			AccountHistory:         nil,
+			MarketHistory:          nil,
+			NftHistory:             nil,
+		}
+
 		for _, feature := range node.Features {
 			if feature == "LiveState" {
 				newNode.Features[LiveState] = true
