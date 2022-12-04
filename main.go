@@ -1,15 +1,17 @@
 package main
 
 import (
-	"github.com/gin-contrib/cors"
-	"github.com/gin-contrib/gzip"
-	"github.com/gin-gonic/gin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-contrib/gzip"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
+	LoadNodes("nodes.json")
 	r := gin.New()
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
