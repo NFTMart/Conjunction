@@ -5,7 +5,7 @@ import (
 )
 
 func TestLoadNodes(t *testing.T) {
-	newNodes := LoadNodes("nodes.json")
+	newNodes := LoadNodes("nodes_test.son")
 	if len(newNodes) != 1 {
 		t.Errorf("len(newNodes) = %d; want 1", len(newNodes))
 	}
