@@ -136,6 +136,14 @@ func LoadNodes(fileName string) []Node {
 
 	var newNodes = make([]Node, 0)
 
+	featureNodes = map[int][]Node{
+		LiveState:              nil,
+		FullTransactionHistory: nil,
+		AccountHistory:         nil,
+		MarketHistory:          nil,
+		NftHistory:             nil,
+	}
+
 	for _, node := range readNodes {
 		if !node.Active {
 			continue
@@ -143,7 +151,7 @@ func LoadNodes(fileName string) []Node {
 		newNode := Node{}
 		newNode.Name = node.Name
 		newNode.Address = node.Address
-		if node.Type == "Full" {
+		if node.Type == "FULL" {
 			newNode.Type = FULL
 		} else if node.Type == "LIGHT" {
 			newNode.Type = LIGHT
@@ -159,14 +167,6 @@ func LoadNodes(fileName string) []Node {
 			AccountHistory:         false,
 			MarketHistory:          false,
 			NftHistory:             false,
-		}
-
-		featureNodes = map[int][]Node{
-			LiveState:              nil,
-			FullTransactionHistory: nil,
-			AccountHistory:         nil,
-			MarketHistory:          nil,
-			NftHistory:             nil,
 		}
 
 		for _, feature := range node.Features {

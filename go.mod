@@ -12,6 +12,7 @@ require (
 require (
 	github.com/Ryamer/jrc v0.0.0-20221203080038-4c8f5893b40b // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/cfoxon/jsonrpc2client v0.0.0-20221203070057-deee6c789601 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect

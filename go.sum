@@ -6,6 +6,8 @@ github.com/cfoxon/jrc v0.0.0-20220609213157-eecb83ecebf6 h1:vGELyr4CIReAAEYiNDwT
 github.com/cfoxon/jrc v0.0.0-20220609213157-eecb83ecebf6/go.mod h1:namujisY108A+IOsocOcE0CE30N+uAflaR4LfU7rIMs=
 github.com/cfoxon/jrc v0.0.0-20221203080713-98dc349ef9e6 h1:UJV9saogfiVqtkgyURYiwGtSB8Ehz5GUXedgX5LrFVM=
 github.com/cfoxon/jrc v0.0.0-20221203080713-98dc349ef9e6/go.mod h1:P56+kqs+qRbSIum6C+8pYAFGTyRQRlR3UMNM6VN5dCM=
+github.com/cfoxon/jsonrpc2client v0.0.0-20221203070057-deee6c789601 h1:H89F/mA46emPwlHfq6GTazfqeqO3BYEcBhS79Cc0on8=
+github.com/cfoxon/jsonrpc2client v0.0.0-20221203070057-deee6c789601/go.mod h1:NHb6hgQrJadyIbJlQPWrpNVlZpyttJLAXKmcCuK4iTw=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
