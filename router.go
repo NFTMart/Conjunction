@@ -33,7 +33,10 @@ type QueryResponseInternal struct {
 
 func Router(r *gin.Engine) {
 	r.POST("/", handleMain)
-	//r.POST("/history")
+	r.POST("/history", handleHistory)
+	r.POST("/accountHistory", handleHistory)
+	r.POST("/nftHistory", handleHistory)
+	r.POST("/marketHistory", handleHistory)
 	r.POST("/contracts", handleContracts)
 	r.POST("/blockchain", handleBlockchain)
 }
@@ -69,7 +72,7 @@ func handleMain(c *gin.Context) {
 			resp,
 		)
 	} else if strings.HasPrefix(query.Method, "blockchain.") {
-		rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
+		rpcClient, _ := jrc.NewServer(GetNodeAddress(FullTransactionHistory))
 		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 		resp, _ := rpcClient.Exec(jr2query)
 		if err != nil {
@@ -121,7 +124,7 @@ func handleContracts(c *gin.Context) {
 	}
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
-	rpcClient, _ := jrc.NewServer("https://engine.rishipanthee.com")
+	rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
 	jr2query := jrc.RpcRequest{Method: "contracts." + query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 	resp, _ := rpcClient.Exec(jr2query)
 	c.JSON(
@@ -137,11 +140,49 @@ func handleBlockchain(c *gin.Context) {
 	}
 	query := QueryParams{}
 	json.Unmarshal(jsonData, &query)
-	rpcClient, _ := jrc.NewServer("https://engine.rishipanthee.com")
+	rpcClient, _ := jrc.NewServer(GetNodeAddress(FullTransactionHistory))
 	jr2query := jrc.RpcRequest{Method: "blockchain." + query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 	resp, _ := rpcClient.Exec(jr2query)
 	c.JSON(
 		http.StatusOK,
 		resp,
+	)
+}
+
+func handleHistory(c *gin.Context) {
+	jsonData, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		errInternal := QueryResponseInternal{-32603, "Error Processing Request"}
+		errRes := QueryResponseError{"2.0", -1, errInternal}
+		c.JSON(
+			http.StatusOK,
+			errRes,
+		)
+	}
+	query := QueryParams{}
+	json.Unmarshal(jsonData, &query)
+	var params map[string]interface{}
+	json.Unmarshal(query.Params, &params)
+	var paramsString = ""
+	for key, value := range params {
+		if paramsString != "" {
+			paramsString += "&"
+		} else {
+			paramsString += "?"
+		}
+		paramsString += key + "=" + url.QueryEscape(value.(string))
+	}
+
+	var endpoint = strings.Split(c.Request.URL.Path, "?")[1]
+	resp, err := http.Get(GetNodeAddress(AccountHistory) + endpoint + paramsString)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	body, _ := ioutil.ReadAll(resp.Body)
+	var badBad interface{}
+	json.Unmarshal(body, &badBad)
+	c.JSON(
+		http.StatusOK,
+		badBad,
 	)
 }
