@@ -40,7 +40,7 @@ func TestLoadNodes(t *testing.T) {
 }
 
 func TestHealthCheck(t *testing.T) {
-	newNodes := LoadNodes("nodes.json")
+	newNodes := LoadNodes("nodes_test.json")
 	if len(newNodes) != 1 {
 		t.Errorf("Error loading nodes")
 	}
