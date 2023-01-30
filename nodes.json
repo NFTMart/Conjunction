@@ -1,14 +1,14 @@
 [
     {
       "name" : "US Node 1",
-      "address" : "http://engine.rishipanthee.com/",
+      "address" : "https://engine.rishipanthee.com/",
       "type" : "FULL",
       "active" : true,
       "features" : ["LiveState", "FullTransactionHistory"]
     },
     {
       "name" : "US History Node",
-      "address" : "http://enginehistory.rishipanthee.com/",
+      "address" : "https://enginehistory.rishipanthee.com/",
       "type" : "HISTORY",
       "active" : true,
       "features" : ["AccountHistory", "MarketHistory", "NftHistory"]
