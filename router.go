@@ -33,10 +33,9 @@ type QueryResponseInternal struct {
 
 func Router(r *gin.Engine) {
 	r.POST("/", handleMain)
-	r.POST("/history", handleHistory)
-	r.POST("/accountHistory", handleHistory)
-	r.POST("/nftHistory", handleHistory)
-	r.POST("/marketHistory", handleHistory)
+	r.GET("/accountHistory", handleHistory)
+	r.GET("/nftHistory", handleHistory)
+	r.GET("/marketHistory", handleHistory)
 	r.POST("/contracts", handleContracts)
 	r.POST("/blockchain", handleBlockchain)
 }
@@ -150,31 +149,17 @@ func handleBlockchain(c *gin.Context) {
 }
 
 func handleHistory(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		errInternal := QueryResponseInternal{-32603, "Error Processing Request"}
-		errRes := QueryResponseError{"2.0", -1, errInternal}
-		c.JSON(
-			http.StatusOK,
-			errRes,
-		)
-	}
-	query := QueryParams{}
-	json.Unmarshal(jsonData, &query)
-	var params map[string]interface{}
-	json.Unmarshal(query.Params, &params)
 	var paramsString = ""
-	for key, value := range params {
+	var query = c.Request.URL.Query()
+	for key, value := range query {
 		if paramsString != "" {
 			paramsString += "&"
 		} else {
 			paramsString += "?"
 		}
-		paramsString += key + "=" + url.QueryEscape(value.(string))
+		paramsString += key + "=" + strings.Join(value[:], ",")
 	}
-
-	var endpoint = strings.Split(c.Request.URL.Path, "?")[1]
-	resp, err := http.Get(GetNodeAddress(AccountHistory) + endpoint + paramsString)
+	resp, err := http.Get(GetNodeAddress(AccountHistory) + c.Request.URL.Path[1:] + paramsString)
 	if err != nil {
 		log.Fatalln(err)
 	}
