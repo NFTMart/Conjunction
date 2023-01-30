@@ -1,0 +1,9 @@
+[
+  {
+    "name" : "US Node 1",
+    "address" : "http://[2001:db8::1]:5000/",
+    "type" : "FULL",
+    "active" : true,
+    "features" : ["LiveState", "FullTransactionHistory"]
+  }
+]

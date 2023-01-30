@@ -1,9 +1,16 @@
 [
     {
       "name" : "US Node 1",
-      "address" : "http://[2001:db8::1]:5000/",
-      "type" : "Full",
+      "address" : "https://engine.rishipanthee.com/",
+      "type" : "FULL",
       "active" : true,
       "features" : ["LiveState", "FullTransactionHistory"]
+    },
+    {
+      "name" : "US History Node",
+      "address" : "https://enginehistory.rishipanthee.com/",
+      "type" : "HISTORY",
+      "active" : true,
+      "features" : ["AccountHistory", "MarketHistory", "NftHistory"]
     }
 ]

@@ -40,6 +40,8 @@ type Node struct {
 	Features map[int]bool `json:"features"`
 }
 
+var featureNodes map[int][]Node
+
 func (x *Node) cleanup() {
 	if x.Address[len(x.Address)-1] != '/' {
 		x.Address += "/"
@@ -126,7 +128,22 @@ func LoadNodes(fileName string) []Node {
 	if err != nil {
 		log.Fatal("can't decode nodes JSON: ", err)
 	}
+	var liveStateNodes = make([]Node, 0)
+	var fullTransactionHistoryNodes = make([]Node, 0)
+	var accountHistoryNodes = make([]Node, 0)
+	var marketHistoryNodes = make([]Node, 0)
+	var nftHistroyNodes = make([]Node, 0)
+
 	var newNodes = make([]Node, 0)
+
+	featureNodes = map[int][]Node{
+		LiveState:              nil,
+		FullTransactionHistory: nil,
+		AccountHistory:         nil,
+		MarketHistory:          nil,
+		NftHistory:             nil,
+	}
+
 	for _, node := range readNodes {
 		if !node.Active {
 			continue
@@ -134,7 +151,7 @@ func LoadNodes(fileName string) []Node {
 		newNode := Node{}
 		newNode.Name = node.Name
 		newNode.Address = node.Address
-		if node.Type == "Full" {
+		if node.Type == "FULL" {
 			newNode.Type = FULL
 		} else if node.Type == "LIGHT" {
 			newNode.Type = LIGHT
@@ -151,24 +168,42 @@ func LoadNodes(fileName string) []Node {
 			MarketHistory:          false,
 			NftHistory:             false,
 		}
+
 		for _, feature := range node.Features {
 			if feature == "LiveState" {
 				newNode.Features[LiveState] = true
+				liveStateNodes = append(liveStateNodes, newNode)
+				featureNodes[LiveState] = liveStateNodes
 			}
 			if feature == "FullTransactionHistory" {
 				newNode.Features[FullTransactionHistory] = true
+				fullTransactionHistoryNodes = append(fullTransactionHistoryNodes, newNode)
+				featureNodes[FullTransactionHistory] = fullTransactionHistoryNodes
 			}
 			if feature == "AccountHistory" {
 				newNode.Features[AccountHistory] = true
+				accountHistoryNodes = append(accountHistoryNodes, newNode)
+				featureNodes[AccountHistory] = accountHistoryNodes
 			}
 			if feature == "MarketHistory" {
 				newNode.Features[MarketHistory] = true
+				marketHistoryNodes = append(marketHistoryNodes, newNode)
+				featureNodes[MarketHistory] = marketHistoryNodes
 			}
 			if feature == "NftHistory" {
 				newNode.Features[NftHistory] = true
+				nftHistroyNodes = append(nftHistroyNodes, newNode)
+				featureNodes[NftHistory] = nftHistroyNodes
 			}
 		}
 		newNodes = append(newNodes, newNode)
 	}
 	return newNodes
+}
+
+//Gets an active node address with a a feature support
+func GetNodeAddress(feature int) string {
+	var nodeToReturn = featureNodes[feature][0].Address
+	//Shift nodes
+	return nodeToReturn
 }
