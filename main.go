@@ -12,10 +12,14 @@ import (
 func main() {
 	LoadNodes("nodes.json")
 	r := gin.New()
+	r.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"POST", "PUT", "PATCH", "DELETE"},
+		AllowHeaders: []string{"Content-Type,access-control-allow-origin, access-control-allow-headers"},
+	}))
 	r.Use(gin.Logger())
 	r.Use(gin.Recovery())
 	r.Use(gzip.Gzip(gzip.DefaultCompression))
-	r.Use(cors.Default())
 
 	Router(r)
 
