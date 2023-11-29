@@ -3,7 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -41,17 +41,8 @@ func Router(r *gin.Engine) {
 }
 
 func handleMain(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		errInternal := QueryResponseInternal{-32603, "Error Processing Request"}
-		errRes := QueryResponseError{"2.0", -1, errInternal}
-		c.JSON(
-			http.StatusOK,
-			errRes,
-		)
-	}
 	query := QueryParams{}
-	json.Unmarshal(jsonData, &query)
+	c.BindJSON(&query)
 	if strings.HasPrefix(query.Method, "contracts.") {
 		rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
 		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
@@ -74,16 +65,6 @@ func handleMain(c *gin.Context) {
 		rpcClient, _ := jrc.NewServer(GetNodeAddress(FullTransactionHistory))
 		jr2query := jrc.RpcRequest{Method: query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 		resp, _ := rpcClient.Exec(jr2query)
-		if err != nil {
-			fmt.Print(err)
-			c.JSON(
-				http.StatusBadGateway,
-				gin.H{
-					"error": err,
-				},
-			)
-			return
-		}
 		c.JSON(
 			http.StatusOK,
 			resp,
@@ -106,7 +87,7 @@ func handleMain(c *gin.Context) {
 		if err != nil {
 			log.Fatalln(err)
 		}
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		var badBad interface{}
 		json.Unmarshal(body, &badBad)
 		c.JSON(
@@ -117,12 +98,8 @@ func handleMain(c *gin.Context) {
 }
 
 func handleContracts(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		// Handle error
-	}
 	query := QueryParams{}
-	json.Unmarshal(jsonData, &query)
+	c.BindJSON(&query)
 	rpcClient, _ := jrc.NewServer(GetNodeAddress(LiveState))
 	jr2query := jrc.RpcRequest{Method: "contracts." + query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 	resp, _ := rpcClient.Exec(jr2query)
@@ -133,12 +110,8 @@ func handleContracts(c *gin.Context) {
 }
 
 func handleBlockchain(c *gin.Context) {
-	jsonData, err := ioutil.ReadAll(c.Request.Body)
-	if err != nil {
-		// Handle error
-	}
 	query := QueryParams{}
-	json.Unmarshal(jsonData, &query)
+	c.BindJSON(&query)
 	rpcClient, _ := jrc.NewServer(GetNodeAddress(FullTransactionHistory))
 	jr2query := jrc.RpcRequest{Method: "blockchain." + query.Method, JsonRpc: "2.0", Id: query.Id, Params: query.Params}
 	resp, _ := rpcClient.Exec(jr2query)
@@ -163,7 +136,7 @@ func handleHistory(c *gin.Context) {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	body, _ := ioutil.ReadAll(resp.Body)
+	body, _ := io.ReadAll(resp.Body)
 	var badBad interface{}
 	json.Unmarshal(body, &badBad)
 	c.JSON(

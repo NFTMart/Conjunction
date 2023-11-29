@@ -2,7 +2,7 @@ package main
 
 import (
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -10,14 +10,14 @@ import (
 	"github.com/cfoxon/jrc"
 )
 
-//Node Types
+// Node Types
 const (
 	FULL = iota
 	LIGHT
 	HISTORY
 )
 
-//Features
+// Features
 const (
 	LiveState = iota
 	FullTransactionHistory
@@ -88,7 +88,7 @@ func (x *Node) HealthCheck() bool {
 			x.Active = false
 			return false
 		}
-		body, err := ioutil.ReadAll(resp.Body)
+		body, err := io.ReadAll(resp.Body)
 		if err == nil {
 			x.Active = false
 			return false
@@ -201,7 +201,7 @@ func LoadNodes(fileName string) []Node {
 	return newNodes
 }
 
-//Gets an active node address with a a feature support
+// Gets an active node address with a a feature support
 func GetNodeAddress(feature int) string {
 	var nodeToReturn = featureNodes[feature][0].Address
 	//Shift nodes
